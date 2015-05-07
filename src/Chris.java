@@ -1,4 +1,7 @@
 package src;
+
+import java.util.HashMap;
+
 /**
  * Chris reads command-line Arguments and Options. He then
  * passes the file / program-string to the lexer.
@@ -21,12 +24,58 @@ public class Chris {
         // No arguments given. Print help
         if(args.length == 0) {
             System.out.println(HELP_TEXT);
-            System.exit(0);
+            System.exit(-1);
+        }
+        HashMap<String, String> inputMap = parseInput(args);
+        String inputFile = inputMap.get("input");
+        String outputFile = intputMap.get("output");
+    }
+
+    public static void testAll() {
+        testParseInput();
+    }
+
+    private static void testParseInput() {
+        // Simulates: java -jar chris.jar -o my_output.c file.chris
+        String[] fullArgs = {"-o", "my_output.c", "file.chris"};
+        HashMap<String, String> map = parseInput(fullArgs);
+        assert map.get("input").equals("file.chris");
+        assert map.get("output").equals("my_output.c");
+
+        String[] onlyInputArgs = {};
+        map = parseInput(onlyInputArgs);
+        assert map.get("input").equals("");
+        assert !map.containsKey("output");
+    }
+
+    /**
+     * Parses the command-line-argument-string-array into a HashMap with them
+     * desired Values.
+     */
+    private HashMap<String, String> parseInput(String[] args) {
+        //TODO: discuss if this shall be integrated into it's own class.
+        HashMap<String, String> parsedMap = new HashMap<String, String>();
+
+        // Don't parse all args, as the last one is the input file.
+        for(int argCounter = 0; argCounter < args.length - 1; argCounter++){
+            if(args[argCounter].equals("-o")) {
+                // Option switch used, but no output specified
+                if(args.length <= argCounter) {
+                    continue;
+                }
+                // Update the output-file-name
+                parsedMap.put("output", args[argCounter + 1]);
+                argCounter++;
+            }
         }
 
-        for(String s : args) {
-            System.out.println(s);
+        // There was no output file specified, so use a predefined name
+        if(!parsedMap.containsKey("output")){
+            parsedMap.puts("output", "out.c");
         }
+        parsedMap.put("input", args[args.length - 1]);
+
+        return parsedMap;
     }
     /**
      * Chris shall not be made, but instead just handle the
