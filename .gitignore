@@ -12,7 +12,7 @@
 hs_err_pid*
 
 # Build folder, in which the binary is stored
-build/
+out/
 
 # OS-X specific files
 .DS_STORE
