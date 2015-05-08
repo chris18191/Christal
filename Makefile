@@ -1,12 +1,12 @@
 .PHONY: build clean
 
-FILES = src/Chris.java
+FILES = src/Chris.java src/lib/ArgumentParser.java
 SOURCEPATH = src/
 BUILDPATH = out/classes
 BIN = out/build/Christal.jar
 MAIN = src.Chris
 MANIFEST = out/manifest
-ARGS = Test -o output
+ARGS = -o output.c
 
 run: jar
 	java -jar $(BIN) $(ARGS)
