@@ -27,8 +27,13 @@ public class Chris {
             System.exit(-1);
         }
         HashMap<String, String> inputMap = parseInput(args);
-        String inputFile = inputMap.get("input");
-        String outputFile = intputMap.get("output");
+        // Parser parser = new Parser();
+        // parser.addSwitch("debug");
+        // parser.addOption("-o", "--output");
+            // HashMap<String, String> args = parser.parse();
+            // bool debug = args.get("debug");
+            String inputFile = inputMap.get("input");
+            String outputFile = intputMap.get("output");
     }
 
     public static void testAll() {
