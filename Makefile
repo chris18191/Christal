@@ -1,6 +1,6 @@
 .PHONY: build clean
 
-FILES = src/Chris.java src/lib/ArgumentParser.java
+FILES = src/Chris.java src/lib/ArgumentParser.java src/lib/ArgumentPosition.java
 SOURCEPATH = src/
 BUILDPATH = out/classes
 BIN = out/build/Christal.jar
