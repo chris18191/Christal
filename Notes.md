@@ -23,3 +23,7 @@
 - 8 Commands (custom syntax)
 - Turing like
 - Code output: file.chris -> compiler -> file.c -> gcc -> file.o
+
+## Example syntax:
+- A
+- D
