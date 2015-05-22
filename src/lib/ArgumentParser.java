@@ -227,160 +227,167 @@ public class ArgumentParser{
             for(int currentArgCounter = args.length - 1; currentArgCounter > 0; currentArgCounter--) {
                 String currentArg = args[currentArgCounter];
                 if(currentArg.startsWith("--") || currentArg.startsWith("-")) {
-                    break;
-                }
-                positionals.add(currentArg);
-            }
-        }
+		    if(optionMap.containsKey(currentArg)) {
+			positionals.remove(positionals.size() - 1);
+		    }
+		    break;
+		}
+		positionals.add(currentArg);
+	    }
+	}
 
-        boolean foundArgument = false;
-        for(int currentArgIndex = 0; currentArgIndex < args.length; currentArgIndex++) {
-            String currentArg = args[currentArgIndex];
-            if(currentArg.startsWith("--") || currentArg.startsWith("-")) {
-                // We found our first real argument. This means that following words (without '--' or '-')
-                // are *no* optionals. (As they are supposed to be at the front.)
-                foundArgument = true;
-                String otherForm = formTranslator.get(currentArg);
-                // Found a switch
-                if(switchMap.containsKey(currentArg) || switchMap.containsKey(otherForm)) {
-                    switchMap.put(currentArg, true);
-                    switchMap.put(otherForm, true);
-                } else if (optionMap.containsKey(currentArg) || optionMap.containsKey(otherForm)){
-                    // Found an option
-                    String optionValue = currentArgIndex < args.length - 1 ? args[currentArgIndex + 1] : null;
-                    optionMap.put(currentArg, optionValue);
-                    optionMap.put(otherForm, optionValue);
-                    // Skip the option Value for next loop
-                    currentArgIndex++;
-                } else {
-                    // Argument is neither a Switch nor an Option
-                    if(this.positionalsPosition != ArgumentPosition.BACK) {
-                        System.out.println("Argument is neither a switch nor an Option.");
-                        return false;
-                    }
-                }
-            } else if (this.positionalsPosition == ArgumentPosition.FRONT){
-                if(!foundArgument) {
-                    positionals.add(currentArg);
-                }
-            } else {
-                // Argument is neither a Positional nor a Switch nor an Option
-                return false;
-            }
-        }
-        return true;
+	boolean foundArgument = false;
+	for(int currentArgIndex = 0; currentArgIndex < args.length; currentArgIndex++) {
+	    String currentArg = args[currentArgIndex];
+	    if(currentArg.startsWith("--") || currentArg.startsWith("-")) {
+		// We found our first real argument. This means that following words (without '--' or '-')
+		// are *no* optionals. (As they are supposed to be at the front.)
+		foundArgument = true;
+		String otherForm = formTranslator.get(currentArg);
+		// Found a switch
+		if(switchMap.containsKey(currentArg) || switchMap.containsKey(otherForm)) {
+		    switchMap.put(currentArg, true);
+		    switchMap.put(otherForm, true);
+		} else if (optionMap.containsKey(currentArg) || optionMap.containsKey(otherForm)){
+		    // Found an option
+		    String optionValue = currentArgIndex < args.length - 1 ? args[currentArgIndex + 1] : null;
+		    optionMap.put(currentArg, optionValue);
+		    optionMap.put(otherForm, optionValue);
+		    // Skip the option Value for next loop
+		    currentArgIndex++;
+		} else {
+		    //  Argument is neither a Switch nor an Option
+			if(this.positionalsPosition != ArgumentPosition.BACK) {
+			    System.out.println("Argument is neither a switch nor an Option.");
+			    return false;
+			}
+		}
+	    } else if (this.positionalsPosition == ArgumentPosition.FRONT){
+		if(!foundArgument) {
+		    positionals.add(currentArg);
+		}
+	    } else {
+		if(this.positionalsPosition == ArgumentPosition.NONE) {
+		    return false;
+		}
+	    }
+	}
+	return true;
     }
 
-    /**
-     * Returns the Usage String for the Program.
-     * The Usage String is a composition of all the arguments and it's options
-     *
-     *
-     * @return The usage String
-     */
-    public String getUsage() {
-        StringBuilder builder = new StringBuilder();
-        for(int index = 0; index < this.usageList.size(); index++) {
-            builder.append(this.usageList.get(index));
-            builder.append("\n");
-        }
-        return builder.toString();
+/**
+ * Returns the Usage String for the Program.
+ * The Usage String is a composition of all the arguments and it's options
+ *
+ *
+ * @return The usage String
+ */
+public String getUsage() {
+    StringBuilder builder = new StringBuilder();
+    for(int index = 0; index < this.usageList.size(); index++) {
+	builder.append(this.usageList.get(index));
+	builder.append("\n");
     }
+    return builder.toString();
+}
 
-    // ------------------------ Static Methods --------------------------------
+// ------------------------ Static Methods --------------------------------
 
-    /**
-     * Runs all the Test cases for this file
-     */
-    public static void testAll() {
-        System.out.println("Running Tests for Argumentparser");
+/**
+ * Runs all the Test cases for this file
+ */
+public static void testAll() {
+    System.out.println("Running Tests for Argumentparser");
 
-        testParser();
+    testParser();
 
-        System.out.println("----------------------");
-        System.out.println("All tests done.");
-    }
+    System.out.println("----------------------");
+    System.out.println("All tests done.");
+}
 
-    // ------------------------ Private Methods ------------------------------
+// ------------------------ Private Methods ------------------------------
 
-    private void addToFormTranslator(String shortForm, String longForm) {
-        this.formTranslator.put(shortForm, longForm);
-        this.formTranslator.put(longForm, shortForm);
-    }
+private void addToFormTranslator(String shortForm, String longForm) {
+    this.formTranslator.put(shortForm, longForm);
+    this.formTranslator.put(longForm, shortForm);
+}
 
-    private void addToUsage(String part) {
-        this.usageList.add(part);
-    }
+private void addToUsage(String part) {
+    this.usageList.add(part);
+}
 
-    private static void testParser() {
-        // chris -o customOutfile.c --logfile mylog.txt --debug -v file1.chris file2.chris
-        String[] args = {"-o", "customOutfile.c", "--logfile", "mylog.txt", "--debug", "-v", "file1.chris", "file2.chris"};
+private static void testParser() {
+    // chris -o customOutfile.c --logfile mylog.txt --debug -v file1.chris file2.chris
+    String[] args = {"-o", "customOutfile.c", "--logfile", "mylog.txt", "--debug", "-v", "-i", "input.txt",  "file1.chris", "file2.chris"};
 
-        ArgumentParser parser = new ArgumentParser("Tester for almost all features. Including positionals at back");
+    ArgumentParser parser = new ArgumentParser("Tester for almost all features. Including positionals at back");
 
-        parser.searchPositionalsAt(ArgumentPosition.BACK);
+    parser.searchPositionalsAt(ArgumentPosition.BACK);
 
-        parser.addOption("-i", "--infile", "FILE", "The file to parse");
-        parser.addOption("-l", "--logfile", "LOGFILE", "The log file");
-        parser.addOption("-o", "--output", "FILE", "The output file");
+    parser.addOption("-i", "--infile", "FILE", "The file to parse");
+    parser.addOption("-l", "--logfile", "LOGFILE", "The log file");
+    parser.addOption("-o", "--output", "FILE", "The output file");
+    parser.addOption("-a", "--asdf", "SOMETHING", "Useless option");
 
-        parser.addSwitch("-d", "--debug", "Enable Debug mode.");
-        parser.addSwitch("-v", "--verbose", "Enable verbose output");
-        parser.addSwitch("-u", "--useless", "Useless switch that shall not be switched on");
+    parser.addSwitch("-d", "--debug", "Enable Debug mode.");
+    parser.addSwitch("-v", "--verbose", "Enable verbose output");
+    parser.addSwitch("-u", "--useless", "Useless switch that shall not be switched on");
 
-        parser.parse(args);
-
-
-        ArrayList<String> positionals = parser.getPositionals();
-        assert positionals.size() == 2;
-        assert positionals.get(0).equals("file1.chris");
-        assert positionals.get(1).equals("file2.chris");
-
-        HashMap<String, String> options = parser.getOptions();
-        assert options.size() == 3; // infile, logfile and output
-        assert options.get("-o").equals(options.get("--output"));
-        assert options.get("-l").equals(options.get("--logfile"));
-        assert options.get("-i").equals(options.get("--infile"));
-
-        assert options.get("--output").equals("customOutfile.c");
-        assert options.get("--logfile").equals("mylog.txt");
-        assert options.get("--infile") == null;
-
-        assert options.get("--outfile") == null;
-        assert options.get("asf") == null;
-        assert options.get(null) == null;
+    parser.parse(args);
 
 
-        HashMap<String, Boolean> switches = parser.getSwitches();
-        assert switches.size() == 2; // debug and verbose
-        assert switches.get("-d").equals(switches.get("--debug"));
-        assert switches.get("-v").equals(switches.get("--verbose"));
-        assert switches.get("-u").equals(switches.get("--useless"));
+    ArrayList<String> positionals = parser.getPositionals();
+    assert positionals.size() == 2;
+    assert positionals.get(0).equals("file1.chris");
+    assert positionals.get(1).equals("file2.chris");
 
-        assert switches.get("--debug") == true;
-        assert switches.get("--verbose") == true;
-        assert switches.get("--useless") == false;
+    HashMap<String, String> options = parser.getOptions();
+    assert options.size() == 3; // infile, logfile and output
+    assert options.get("-o").equals(options.get("--output"));
+    assert options.get("-l").equals(options.get("--logfile"));
+    assert options.get("-i").equals(options.get("--infile"));
+    assert options.get("-a").equals(options.get("--asdf"));
 
-        assert switches.get("--usebose") == false;
-        assert switches.get("asdf") == false;
-        assert switches.get(null) == false;
+    assert options.get("--output").equals("customOutfile.c");
+    assert options.get("--logfile").equals("mylog.txt");
+    assert options.get("--infile").equals("input.txt");
+    assert options.get("--asdf") == null;
 
-        System.out.println("Result of parser.getUsage():");
-        System.out.println(parser.getUsage());
+    assert options.get("--outfile") == null;
+    assert options.get("asf") == null;
+    assert options.get(null) == null;
 
-        String[] argsFront = {"file1.chris", "file2.chris"};
-        parser = new ArgumentParser("Tester for positionals at front");
-        parser.searchPositionalsAt(ArgumentPosition.FRONT);
 
-        assert parser.parse(argsFront);
+    HashMap<String, Boolean> switches = parser.getSwitches();
+    assert switches.size() == 2; // debug and verbose
+    assert switches.get("-d").equals(switches.get("--debug"));
+    assert switches.get("-v").equals(switches.get("--verbose"));
+    assert switches.get("-u").equals(switches.get("--useless"));
 
-        positionals = parser.getPositionals();
-        assert positionals.size() == 2;
-        assert positionals.get(0).equals("file1.chris");
-        assert positionals.get(1).equals("file2.chris");
+    assert switches.get("--debug") == true;
+    assert switches.get("--verbose") == true;
+    assert switches.get("--useless") == false;
 
-        parser = new ArgumentParser("Parser that is expected to fail");
-        assert !parser.parse(argsFront);
-    }
+    assert switches.get("--usebose") == false;
+    assert switches.get("asdf") == false;
+    assert switches.get(null) == false;
+
+    System.out.println("Result of parser.getUsage():");
+    System.out.println(parser.getUsage());
+
+    String[] argsFront = {"file1.chris", "file2.chris"};
+    parser = new ArgumentParser("Tester for positionals at front");
+    parser.searchPositionalsAt(ArgumentPosition.FRONT);
+
+    assert parser.parse(argsFront);
+
+    positionals = parser.getPositionals();
+    assert positionals.size() == 2;
+    assert positionals.get(0).equals("file1.chris");
+    assert positionals.get(1).equals("file2.chris");
+
+    parser = new ArgumentParser("Parser that is expected to fail");
+    assert !parser.parse(argsFront);
+}
 
 }

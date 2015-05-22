@@ -20,8 +20,8 @@ public class Lexer {
 	RIGHT("(R|r)"),
 	INPUT("(I|i)"),
 	OUTPUT("(O|o)"),
-	INCREASE("(+|a|A)"),
-	DECREASE("(-|d|D)"),
+	INCREASE("(\\+|a|A)"),
+	DECREASE("(\\-|d|D)"),
 	LOOPSTART("(\\{|\\()"),
 	LOOPSTOP("(\\}|\\))");
 	

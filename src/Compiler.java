@@ -17,16 +17,28 @@ public class Compiler {
 			       String outputFile,
 			       int memoryCapacity) {
 
-	try(Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"))) {
+	try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outputFile), "utf-8"))) {
 	    memoryCapacity++;
-	    writer.write("#include <stdio.h>\n\n");
+	    writer.write("#include <stdio.h>\n");
+	    writer.write("#include <stdlib.h>\n\n");
 	    writer.write("int main(int argc, char** argv) {\n");
-	    writer.write("\tchar memory[" + memoryCapacity + "];\n");
-	    writer.write("\tmemory = \"\";\n");
+	    writer.write("\tchar memory[" + memoryCapacity + "] = \"\";\n");
+	    writer.write("\tint pointer = 0;\n");
 
 	    // Write the program
+	    for(Lexer.Token token: tokens) {
+		if(token.type == Lexer.TokenType.RIGHT) {
+		    writer.write("\t++pointer;\n");
+		} else if(token.type == Lexer.TokenType.OUTPUT) {
+		    writer.write("\tprintf(\"%c\", memory[pointer]);\n");
+		} else if(token.type == Lexer.TokenType.INCREASE) {
+		    writer.write("\t++memory[pointer];\n");
+		} else if(token.type == Lexer.TokenType.DECREASE) {
+		    writer.write("\t--memory[pointer];\n");
+		}
+	    }
 
-	    writer.write("\treturn 0;");
+	    writer.write("\treturn 0;\n");
 	    writer.write("}");
 	    writer.close();
 	} catch(IOException ex) {
