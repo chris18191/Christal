@@ -27,3 +27,5 @@
 ## Example syntax:
 - A
 - D
+- I
+- {
