@@ -35,7 +35,7 @@ public class ArgumentParser{
      *     HashMap<String, String> options = parser.getOptions();
      *     HashMap<String, boolean> switches = parser.getSwitches();
      *     boolean isDebug = switches.get("--debug");   // same as: boolean isDebug = switches.get("-d");
-     *     String outputFile = options.get("--output"); // same as: String outputFIle = options.get("-o");
+     *     String outputFile = options.get("--output"); // same as: String outputFile = options.get("-o");
      *     ArrayList<String> positionals = parser.getPositionals();
      *
      *
@@ -142,7 +142,8 @@ public class ArgumentParser{
      *     }
      *
      *
-     * @return The HashMap with all the options in it.
+     * @return The HashMap with all the options in it. If the value
+     *         was not specified by the user, it is null
      */
     public HashMap<String, String> getOptions() {
         assert this.isParsed : "Argumentparser has not parsed it's arguments yet, so you cannot retrieve an Option yet";
@@ -215,6 +216,7 @@ public class ArgumentParser{
     public boolean parse(String[] args) {
         // There are not arguments. Therefore this is an error.
         if(args.length == 0) {
+            System.out.println("No Arguments provided.");
             return false;
         }
 
@@ -252,7 +254,10 @@ public class ArgumentParser{
                     currentArgIndex++;
                 } else {
                     // Argument is neither a Switch nor an Option
-                    return false;
+                    if(this.positionalsPosition != ArgumentPosition.BACK) {
+                        System.out.println("Argument is neither a switch nor an Option.");
+                        return false;
+                    }
                 }
             } else if (this.positionalsPosition == ArgumentPosition.FRONT){
                 if(!foundArgument) {
