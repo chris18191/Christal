@@ -1,8 +1,10 @@
 ## Example run (compiled language)
-1. Run the Preprocessor
-1. Compiler
-1. Assembler
-1. Linker
+1. Lex
+2. Parse
+3. Semantic Actions/Analysis
+4. Frame Layout
+5. Translate
+6. Code Emission
 
 ## Structure of a Compiler
 1. Analysis
@@ -21,3 +23,9 @@
 - 8 Commands (custom syntax)
 - Turing like
 - Code output: file.chris -> compiler -> file.c -> gcc -> file.o
+
+## Example syntax:
+- A
+- D
+- I
+- {
