@@ -74,22 +74,27 @@ public class Chris {
 	}
 	String[] commands = sb.toString().split("");
 	// TODO: populate arraylist
-	ArrayList<Lexer.Token> tokens = Lexer.lex(new ArrayList<String>(Arrays.asList(commands)));
+        // First element in commands is currently set empty, causing an error
+        String[] fixedCommands = new String[commands.length -1];
+        for(int i = 1;i < commands;i++){
+            fixedCommands[i -1] = commands[i];
+        }
+        ArrayList<Lexer.Token> tokens = Lexer.lex(new ArrayList<String>(Arrays.asList(commands)));
 
-	int moves = 0;
-	for(Lexer.Token tk : tokens) {
-	    if(tk.type == Lexer.TokenType.LEFT || tk.type == Lexer.TokenType.RIGHT) {
-		moves++;
-	    }
-	}
+        int moves = 0;
+        for(Lexer.Token tk : tokens) {
+            if(tk.type == Lexer.TokenType.LEFT || tk.type == Lexer.TokenType.RIGHT) {
+                moves++;
+            }
+        }
 
-	Compiler.compile(tokens, outputFile, moves);
+        Compiler.compile(tokens, outputFile, moves);
     }
 
-	    /**
-	     * Chris shall not be made, but instead just handle the
-	     * commandline options
-	     */
-	    private Chris() {
+        /**
+         * Chris shall not be made, but instead just handle the
+         * commandline options
+         */
+        private Chris() {
 	}
     }

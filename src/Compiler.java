@@ -35,15 +35,18 @@ public class Compiler {
 		    writer.write("\t++memory[pointer];\n");
 		} else if(token.type == Lexer.TokenType.DECREASE) {
 		    writer.write("\t--memory[pointer];\n");
-		}
-	    }
+		} else if(token.type == Lexer.TokenType.LOOPSTART) {
+                    writer.write("\twhile(memory[pointer]){\n");
+                } else if(token.type == Lexer.TokenType.LOOPSTOP) {
+                    writer.write("\t}\n");
+                }
 
-	    writer.write("\treturn 0;\n");
-	    writer.write("}");
-	    writer.close();
-	} catch(IOException ex) {
-	    System.out.println("Error writing to file " + outputFile);
-	    System.exit(-1);
-	}
+                writer.write("\treturn 0;\n");
+                writer.write("}");
+                writer.close();
+            } catch(IOException ex) {
+                System.out.println("Error writing to file " + outputFile);
+                System.exit(-1);
+            }
+        }
     }
-}
